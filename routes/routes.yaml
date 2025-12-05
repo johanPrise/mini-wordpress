@@ -1,5 +1,25 @@
+# =====================================================================
+# 🛣️ FICHIER DE ROUTES - Définition des URLs de l'application
+# =====================================================================
+#
+# Ce fichier utilise le format YAML (Yet Another Markup Language)
+# YAML est facile à lire et à écrire pour les humains.
+#
+# 📋 STRUCTURE D'UNE ROUTE :
+#   /url-de-la-page:           # L'URL que l'utilisateur tape
+#     controller: NomController # La classe PHP qui gère cette page
+#     action: nomMethode        # La méthode à appeler dans ce controller
+#
+# 💡 EXEMPLE DE FONCTIONNEMENT :
+#   Quand un utilisateur va sur /login :
+#   1. Le routeur lit ce fichier
+#   2. Il trouve : controller: AuthController, action: showLogin
+#   3. Il appelle AuthController->showLogin()
+#
+# =====================================================================
+
 # ================================
-# FRONT OFFICE
+# FRONT OFFICE (Pages publiques)
 # ================================
 
 /:
@@ -10,105 +30,128 @@
 # Géré différemment - voir plus bas
 
 # ================================
-# AUTH (Front)
+# AUTH (Authentification)
 # ================================
 
+# 📝 Afficher le formulaire de connexion
 /login:
   controller: AuthController
   action: showLogin
 
+# 🔐 Traiter la soumission du formulaire de connexion
 /login/submit:
   controller: AuthController
   action: login
 
+# 🚪 Déconnexion
 /logout:
   controller: AuthController
   action: logout
 
+# 📝 Afficher le formulaire d'inscription
 /register:
   controller: AuthController
   action: showRegister
 
+# ✅ Traiter la soumission du formulaire d'inscription
 /register/submit:
   controller: AuthController
   action: register
 
+# 📧 Vérification de l'email (lien envoyé par email)
 /verify-email:
   controller: AuthController
   action: verifyEmail
 
+# 📝 Afficher le formulaire "Mot de passe oublié"
 /forgot-password:
   controller: AuthController
   action: showForgotPassword
 
+# 📧 Traiter la demande de réinitialisation
 /forgot-password/submit:
   controller: AuthController
   action: forgotPassword
 
+# 📝 Afficher le formulaire de nouveau mot de passe
 /reset-password:
   controller: AuthController
   action: showResetPassword
 
+# ✅ Traiter le nouveau mot de passe
 /reset-password/submit:
   controller: AuthController
   action: resetPassword
 
 # ================================
-# BACK OFFICE
+# BACK OFFICE (Administration)
 # ================================
 
+# 📊 Tableau de bord admin
 /admin:
   controller: AdminController
   action: dashboard
 
 # --- Gestion Utilisateurs ---
 
+# 📋 Liste des utilisateurs
 /admin/users:
   controller: UserController
   action: index
 
+# 📝 Formulaire de création d'utilisateur
 /admin/users/create:
   controller: UserController
   action: showCreate
 
+# ✅ Traiter la création d'utilisateur
 /admin/users/create/submit:
   controller: UserController
   action: create
 
+# 📝 Formulaire de modification d'utilisateur
 /admin/users/edit:
   controller: UserController
   action: showEdit
 
+# ✅ Traiter la modification d'utilisateur
 /admin/users/edit/submit:
   controller: UserController
   action: edit
 
+# 🗑️ Supprimer un utilisateur
 /admin/users/delete:
   controller: UserController
   action: delete
 
 # --- Gestion Pages ---
 
+# 📋 Liste des pages
 /admin/pages:
   controller: PageController
   action: index
 
+# 📝 Formulaire de création de page
 /admin/pages/create:
   controller: PageController
   action: showCreate
 
+# ✅ Traiter la création de page
 /admin/pages/create/submit:
   controller: PageController
   action: create
 
+# 📝 Formulaire de modification de page
 /admin/pages/edit:
   controller: PageController
   action: showEdit
 
+# ✅ Traiter la modification de page
 /admin/pages/edit/submit:
   controller: PageController
   action: edit
 
+# 🗑️ Supprimer une page
 /admin/pages/delete:
   controller: PageController
   action: delete
