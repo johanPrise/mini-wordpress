@@ -6,6 +6,7 @@ Bienvenue dans ton parcours d'apprentissage PHP ! Ce guide est conçu pour que t
 
 ## 📋 Table des Matières
 
+0. [🐳 Démarrer avec Docker](#0--démarrer-avec-docker)
 1. [Comprendre la Structure du Projet](#1-comprendre-la-structure-du-projet)
 2. [Niveau 1 : Les Bases de PHP](#2-niveau-1--les-bases-de-php)
 3. [Niveau 2 : Le Pattern MVC](#3-niveau-2--le-pattern-mvc)
@@ -16,6 +17,77 @@ Bienvenue dans ton parcours d'apprentissage PHP ! Ce guide est conçu pour que t
 8. [Niveau 7 : Les Modèles](#8-niveau-7--les-modèles)
 9. [Niveau 8 : L'Authentification](#9-niveau-8--lauthentification)
 10. [Exercices Pratiques](#10-exercices-pratiques)
+
+---
+
+## 0. 🐳 Démarrer avec Docker
+
+### 🎯 Objectif
+Lancer l'environnement de développement sans installer PHP, MySQL, Apache sur ta machine.
+
+### ❓ Pourquoi Docker ?
+
+Docker permet de créer un environnement **isolé** et **reproductible** :
+- Pas besoin d'installer PHP, MySQL, Apache manuellement
+- Tout le monde a exactement le même environnement
+- Un seul fichier (`docker-compose.yml`) définit toute l'infrastructure
+
+### 📦 Prérequis
+
+1. Installe **Docker Desktop** : https://www.docker.com/products/docker-desktop
+2. Vérifie l'installation en ouvrant un terminal :
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+### 🚀 Lancer le projet
+
+```bash
+# 1. Ouvre un terminal dans le dossier du projet
+
+# 2. Lance les conteneurs Docker (première fois = télécharge les images)
+docker-compose up -d
+
+# 3. Vérifie que tout fonctionne
+docker-compose ps
+```
+
+### 🌐 Accéder à l'application
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| 🌐 Application | http://localhost:8080 | Ton site Mini WordPress |
+| 🔧 phpMyAdmin | http://localhost:8081 | Interface pour gérer la BDD |
+
+### 📊 Identifiants phpMyAdmin
+
+- **Serveur** : db
+- **Utilisateur** : mini_wp_user
+- **Mot de passe** : mini_wp_password
+
+### 🛑 Arrêter le projet
+
+```bash
+# Arrête les conteneurs (les données sont conservées)
+docker-compose down
+
+# Arrête ET supprime les données de la BDD
+docker-compose down -v
+```
+
+### 💡 Commandes utiles
+
+```bash
+# Voir les logs en temps réel
+docker-compose logs -f
+
+# Accéder au conteneur PHP pour exécuter des commandes
+docker-compose exec web bash
+
+# Redémarrer après modification du Dockerfile
+docker-compose up -d --build
+```
 
 ---
 

@@ -1,0 +1,37 @@
+# =====================================================================
+# 🐳 DOCKERIGNORE - Fichiers à exclure de l'image Docker
+# =====================================================================
+#
+# Ces fichiers ne seront PAS copiés dans l'image Docker.
+# Cela réduit la taille de l'image et évite les conflits.
+#
+# =====================================================================
+
+# Git
+.git
+.gitignore
+
+# Docker (évite la récursion)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+LICENSE
+
+# Fichiers temporaires
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# IDE / Éditeurs
+.idea
+.vscode
+*.swp
+*.swo
+
+# Dépendances (seront installées dans le conteneur si nécessaire)
+vendor/
+node_modules/

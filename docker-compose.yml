@@ -1,0 +1,105 @@
+# =====================================================================
+# 🐳 DOCKER COMPOSE - Environnement de développement Mini WordPress
+# =====================================================================
+#
+# Ce fichier définit l'infrastructure de l'application :
+# - Un serveur web PHP/Apache
+# - Une base de données MySQL
+# - phpMyAdmin pour gérer la base de données visuellement
+#
+# 💡 COMMENT L'UTILISER ?
+#    1. Installe Docker Desktop : https://www.docker.com/products/docker-desktop
+#    2. Ouvre un terminal dans ce dossier
+#    3. Lance : docker-compose up -d
+#    4. Accède à :
+#       - L'application : http://localhost:8080
+#       - phpMyAdmin : http://localhost:8081
+#
+# =====================================================================
+
+version: '3.8'
+
+services:
+  # ================================
+  # 🌐 SERVEUR WEB PHP/APACHE
+  # ================================
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini_wordpress_web
+    ports:
+      # Port local:Port conteneur
+      # Accède à http://localhost:8080 pour voir l'application
+      - "8080:80"
+    volumes:
+      # Monte le code source dans le conteneur
+      # Les modifications sont visibles immédiatement (pas besoin de rebuild)
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      # Variables d'environnement pour la connexion à la BDD
+      - DB_HOST=db
+      - DB_NAME=mini_wordpress
+      - DB_USER=mini_wp_user
+      - DB_PASSWORD=mini_wp_password
+    networks:
+      - mini_wordpress_network
+
+  # ================================
+  # 🗄️ BASE DE DONNÉES MYSQL
+  # ================================
+  db:
+    image: mysql:8.0
+    container_name: mini_wordpress_db
+    restart: unless-stopped
+    ports:
+      # Port MySQL accessible depuis l'hôte (optionnel)
+      - "3306:3306"
+    environment:
+      # Configuration de MySQL
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mini_wordpress
+      MYSQL_USER: mini_wp_user
+      MYSQL_PASSWORD: mini_wp_password
+    volumes:
+      # Persiste les données de la BDD (ne sont pas perdues au redémarrage)
+      - mysql_data:/var/lib/mysql
+      # Exécute le script SQL au premier démarrage
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mini_wordpress_network
+
+  # ================================
+  # 🔧 PHPMYADMIN (Gestion visuelle de la BDD)
+  # ================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: mini_wordpress_phpmyadmin
+    restart: unless-stopped
+    ports:
+      # Accède à http://localhost:8081 pour phpMyAdmin
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: mini_wp_user
+      PMA_PASSWORD: mini_wp_password
+    depends_on:
+      - db
+    networks:
+      - mini_wordpress_network
+
+# ================================
+# 📦 VOLUMES (Stockage persistant)
+# ================================
+volumes:
+  mysql_data:
+    name: mini_wordpress_mysql_data
+
+# ================================
+# 🌐 RÉSEAUX
+# ================================
+networks:
+  mini_wordpress_network:
+    name: mini_wordpress_network
