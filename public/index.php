@@ -56,7 +56,7 @@ if(strlen($uri > 1)){
 
 $routesFile = __DIR__ . '/../routes/routes.yaml';
 if (! file_exists($routesFile)) {
-    die("❌ Fichier routes.yml introuvable");
+    die("❌ Fichier routes/routes.yaml introuvable");
 }
 
 // 📖 yaml_parse_file() : Lit un fichier YAML et le convertit en tableau PHP

@@ -140,9 +140,9 @@ class User {
         // execute() remplace les ? par les valeurs du tableau
         $stmt->execute([$id]);
         
-        // fetch() = UN seul résultat (vs fetchAll = plusieurs)
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'User');
-        return $stmt->fetch();
+        // fetchObject() avec le nom de la classe retourne directement un objet User
+        // Retourne false si aucun résultat trouvé
+        return $stmt->fetchObject('User');
     }
     
     /**
@@ -159,8 +159,8 @@ class User {
         $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'User');
-        return $stmt->fetch();
+        // fetchObject() avec le nom de la classe retourne directement un objet User
+        return $stmt->fetchObject('User');
     }
     
     // ================================
