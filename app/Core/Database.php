@@ -1,17 +1,31 @@
 <?php
-class Database{
-    private static $instance = null;
+namespace App\Core;
 
-    private function __construct(){}
+use PDO;
+use PDOException;
 
-    public static function getInstance(){
-        if( self::$instance === null ){
-            try{
-                self::$instance = new PDO('mysql:host=' . DB_HOST .'; dbname=' . DB_NAME, DB_USER, DB_PASSWORD);
-                self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            } catch (Exception $e){
-                die('Erreur de connection à la base de données : ' . $e->getMessage());
+class Database {
+
+    private static ?PDO $instance = null;
+
+    public static function getInstance(): PDO
+    {
+        if (self::$instance === null) {
+            try {
+                self::$instance = new PDO(
+                    "pgsql:host=pg-db;port=5432;dbname=devdb",
+                    "devuser",
+                    "devpass",
+                    [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                    ]
+                );
+
+            } catch (PDOException $e) {
+                die("Erreur DB : " . $e->getMessage());
             }
+            self::$instance->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         }
         return self::$instance;
     }

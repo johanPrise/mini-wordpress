@@ -1,54 +1,24 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../config/mail.php';
-require_once __DIR__ . '/../config/app.php';
 
-$uri = $_SERVER['REQUEST_URI'];
+use App\Core\App;
 
-$uriExploded = explode('?', $uri);
-if(is_array($uriExploded)){
-    $uri = $uriExploded[0];
-}
-if(strlen($uri > 1)){
-    $uri = rtrim($uri, '/');
-}
+spl_autoload_register(function ($class) {
 
-$routesFile = __DIR__ . '/../routes.yml';
-if (! file_exists($routesFile)) {
-    die("❌ Fichier routes.yml introuvable");
-}
-$routes = yaml_parse_file($routesFile);
+    // Exemple: App\Core\Database → app/Core/Database.php
+    $class = str_replace("App\\", "", $class);
+    $class = str_replace("\\", "/", $class);
 
-if (empty($routes[$uri])) {
-    http_response_code(404);
-    die("❌ 404 - Page non trouvée");
-}
+    $file = __DIR__ . "/../" . $class . ".php";
 
-if (empty($routes[$uri]["controller"])) {
-    die("❌ Pas de controller pour cette route");
-}
-if (empty($routes[$uri]["action"])) {
-    die("❌ Pas d'action pour cette route");
-}
+    if (file_exists($file)) {
+        require_once $file;
+    } else {
+        die("Autoload error: fichier introuvable → $file");
+    }
+});
 
-$controller = $routes[$uri]["controller"];
-$action = $routes[$uri]["action"];
+require_once __DIR__ . '/../app/Core/App.php';
+require_once __DIR__ . '/../vendor/autoload.php'; // optionnel si tu utilises composer
 
-$controllerFile = __DIR__ . '/../app/Controllers/' . $controller . '.php';
-if (!file_exists($controllerFile)) {
-    die("❌ Controller introuvable : " .  $controller);
-}
-require_once $controllerFile;
-
-if (!class_exists($controller)) {
-    die("❌ Classe introuvable : " .  $controller);
-}
-
-$objController = new $controller();
-
-if (!method_exists($objController, $action)) {
-    die("❌ Méthode introuvable : " .  $action);
-}
-
-$objController->$action();
+$app = new App();
+$app->run();
