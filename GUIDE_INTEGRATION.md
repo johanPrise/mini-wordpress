@@ -174,11 +174,12 @@ git checkout main -- migrations/init.sql
 Puis éditez manuellement `migrations/init.sql` pour ajouter les champs manquants :
 
 ```sql
--- Dans la table users, ajouter :
-firstname VARCHAR(100),
-lastname VARCHAR(100),
-is_active BOOLEAN DEFAULT FALSE,
-token VARCHAR(255),
+-- Ajouter ces colonnes à la table users :
+ALTER TABLE users 
+ADD COLUMN firstname VARCHAR(100),
+ADD COLUMN lastname VARCHAR(100),
+ADD COLUMN is_active BOOLEAN DEFAULT FALSE,
+ADD COLUMN token VARCHAR(255);
 ```
 
 **Si vous passez à PostgreSQL** :
@@ -242,8 +243,8 @@ nano .env  # ou vim, code, etc.
 
 ```bash
 # Option 1 : Avec Docker
-docker-compose up -d
-docker-compose exec app composer install
+docker compose up -d
+docker compose exec app composer install
 
 # Option 2 : Sans Docker
 composer install
@@ -285,8 +286,8 @@ git status
 
 # S'assurer que vendor/ et .env ne sont PAS dans la liste
 # Si oui, les ajouter à .gitignore et :
-git rm --cached -r vendor/
-git rm --cached .env
+git rm --cached -r vendor/ 2>/dev/null || true
+git rm --cached .env 2>/dev/null || true
 ```
 
 ### 8.2 Committer l'intégration
@@ -338,15 +339,20 @@ Avant de merger dans main, vérifier :
 ### Problème : Conflit lors du checkout
 
 ```bash
-# Si git refuse de checkout un fichier
-git checkout houda -- path/to/file --force
+# Si git refuse de checkout un fichier (fichier modifié localement)
+# D'abord sauvegarder vos modifications
+git stash
+# Puis récupérer le fichier
+git checkout houda -- path/to/file
+# Ou utiliser git restore
+git restore --source=houda path/to/file
 ```
 
 ### Problème : Vendor déjà commité
 
 ```bash
 # Si vendor/ est déjà dans l'historique git
-git rm -r --cached vendor/
+git rm -r --cached vendor/ 2>/dev/null || true
 echo "/vendor/" >> .gitignore
 git add .gitignore
 git commit -m "chore: Remove vendor directory from git"
