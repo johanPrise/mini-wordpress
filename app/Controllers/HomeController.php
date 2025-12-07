@@ -24,39 +24,4 @@ class HomeController extends Controller
             'menuPages' => $menuPages
         ]);
     }
-
-    /**
-     * Afficher une page par son slug
-     */
-    public function show(string $slug): void
-    {
-        $page = Page::findBySlug($slug);
-
-        if (!$page) {
-            http_response_code(404);
-            $this->render('front/home', [
-                'title' => 'Page non trouvée',
-                'error' => 'La page demandée n\'existe pas.',
-                'menuPages' => Page::getMenuPages()
-            ]);
-            return;
-        }
-
-        // Vérifier si la page est publiée
-        if ($page['status'] !== 'published') {
-            http_response_code(404);
-            $this->render('front/home', [
-                'title' => 'Page non trouvée',
-                'error' => 'La page demandée n\'existe pas.',
-                'menuPages' => Page::getMenuPages()
-            ]);
-            return;
-        }
-
-        $this->render('front/page', [
-            'title' => $page['title'],
-            'page' => $page,
-            'menuPages' => Page::getMenuPages()
-        ]);
-    }
 }
