@@ -272,15 +272,15 @@ Houda a ajouté une configuration Docker complète :
 
 ### Recommandation finale:
 
-Le travail de Houda est de **haute qualité** mais devrait être **mergé avec précaution**. 
+Le travail de Houda est de **haute qualité** mais devrait être **fusionné avec précaution**. 
 
 **Plan suggéré**:
 1. Prendre le système d'authentification de Houda (excellent)
 2. Prendre l'infrastructure Docker de Houda
 3. Conserver le système de pages sophistiqué de main
 4. Décider en équipe de la base de données à utiliser
-5. Nettoyer les fichiers sensibles avant le merge
-6. Créer une branche de merge qui combine le meilleur des deux
+5. Nettoyer les fichiers sensibles avant la fusion
+6. Créer une branche de fusion qui combine le meilleur des deux
 
 **Le travail de Houda complète le projet mais ne doit pas le remplacer.**
 

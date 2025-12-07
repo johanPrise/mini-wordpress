@@ -82,7 +82,7 @@
 
 **Score: 7/10** ⭐⭐⭐⭐⭐⭐⭐
 
-**Travail de qualité** mais nécessite un **merge intelligent** avec la branche main.
+**Travail de qualité** mais nécessite une **fusion intelligente** avec la branche main.
 
 **Le travail de Houda COMPLÈTE le projet mais ne doit pas le REMPLACER.**
 
