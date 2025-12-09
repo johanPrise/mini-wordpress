@@ -3,7 +3,7 @@ namespace App\Core;
 
 use App\Config\Database as DatabaseConfig;
 use PDO;
-use Exception;
+use PDOException;
 
 class Database{
 
@@ -14,9 +14,16 @@ class Database{
     public static function getInstance(){
         if( self::$instance === null ){
             try{
-                self::$instance = new PDO('mysql:host=' . DatabaseConfig::DB_HOST .'; dbname=' . DatabaseConfig::DB_NAME, DatabaseConfig::DB_USER, DatabaseConfig::DB_PASSWORD);
+                $dsn = sprintf(
+                    'pgsql:host=%s;port=%s;dbname=%s',
+                    DatabaseConfig::DB_HOST,
+                    DatabaseConfig::DB_PORT,
+                    DatabaseConfig::DB_NAME
+                );
+                self::$instance = new PDO($dsn, DatabaseConfig::DB_USER, DatabaseConfig::DB_PASSWORD);
                 self::$instance->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            } catch (Exception $e){
+                self::$instance->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
+            } catch (PDOException $e){
                 die('Erreur de connection à la base de données : ' . $e->getMessage());
             }
         }
