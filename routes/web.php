@@ -14,4 +14,7 @@ return [
     "/activate" => [AuthController::class, "activate"],
 
     "/admin/users" => [UserController::class, "index"],
+
+    "/forgot-password" => [AuthController::class, "forgotPassword"],
+    "/reset-password" => [AuthController::class, "resetPassword"],
 ];

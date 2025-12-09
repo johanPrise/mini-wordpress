@@ -10,7 +10,7 @@ class Database {
 
     public static function getInstance(): PDO
     {
-        if (self::$instance === null) {
+        if (self::$instance === null) {  //Singleton
             try {
                 self::$instance = new PDO(
                     "pgsql:host=pg-db;port=5432;dbname=devdb",

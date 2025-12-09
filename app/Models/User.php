@@ -45,4 +45,31 @@ class User extends Model
     {
         return self::query("SELECT * FROM users ORDER BY id DESC");
     }
+
+    public static function setResetToken(string $email, string $token)
+    {
+        $sql = "UPDATE users SET reset_token = :token WHERE email = :email";
+        return self::query($sql, ["token" => $token, "email" => $email], false);
+    }
+
+    public static function updatePasswordWithToken(string $email, string $token, string $password)
+    {
+        // On vérifie si le token existe
+        $sql = "SELECT * FROM users WHERE email = :email AND reset_token = :token LIMIT 1";
+        $user = self::queryOne($sql, ["email" => $email, "token" => $token]);
+
+        if (!$user) return false;
+
+        // Modifier le mot de passe et supprimer le token
+        $sql = "UPDATE users 
+                SET password = :password, reset_token = NULL 
+                WHERE email = :email";
+
+        self::query($sql, [
+            "password" => password_hash($password, PASSWORD_DEFAULT),
+            "email" => $email
+        ], false);
+
+        return true;
+    }
 }
