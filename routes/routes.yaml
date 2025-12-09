@@ -1,14 +1,30 @@
+# --- FRONTOFFICE ---
 /:
-  controller: HomeController
+  controller: FrontController
   action: index
 
+# --- AUTHENTIFICATION ---
 /register:
   controller: AuthController
   action: register
+  method: GET
+
+/register-post:
+  controller: AuthController
+  action: register
+  method: POST
+  path: /register
 
 /login:
   controller: AuthController
   action: login
+  method: GET
+
+/login-post:
+  controller: AuthController
+  action: login
+  method: POST
+  path: /login
 
 /forgot-password:
   controller: AuthController
@@ -21,3 +37,73 @@
 /activate:
   controller: AuthController
   action: activate
+
+/logout:
+  controller: AuthController
+  action: logout
+
+# --- BACKOFFICE DASHBOARD ---
+/admin:
+  controller: FrontController
+  action: dashboard
+
+# --- BACKOFFICE USERS ---
+/admin/users:
+  controller: UserController
+  action: index
+
+/admin/users/create:
+  controller: UserController
+  action: create
+
+/admin/users/store:
+  controller: UserController
+  action: store
+  method: POST
+
+/admin/users/{id}/edit:
+  controller: UserController
+  action: edit
+
+/admin/users/{id}/update:
+  controller: UserController
+  action: update
+  method: POST
+
+/admin/users/{id}/delete:
+  controller: UserController
+  action: delete
+  method: POST
+
+# --- BACKOFFICE PAGES ---
+/admin/pages:
+  controller: PageController
+  action: index
+
+/admin/pages/create:
+  controller: PageController
+  action: create
+
+/admin/pages/store:
+  controller: PageController
+  action: store
+  method: POST
+
+/admin/pages/{id}/edit:
+  controller: PageController
+  action: edit
+
+/admin/pages/{id}/update:
+  controller: PageController
+  action: update
+  method: POST
+
+/admin/pages/{id}/delete:
+  controller: PageController
+  action: delete
+  method: POST
+
+# --- FRONTOFFICE PAGES (doit être à la fin car capture tout) ---
+/{slug}:
+  controller: FrontController
+  action: show

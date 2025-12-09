@@ -34,10 +34,12 @@ class App{
 
         $routes = Yaml::parseFile($routesFile);
 
-        foreach ($routes as $path => $config) {
+        foreach ($routes as $key => $config) {
             $controller = 'App\\Controllers\\' . $config['controller'];
             $action = $config['action'];
             $method = strtoupper($config['method'] ?? 'GET');
+            // Utilise 'path' si défini, sinon utilise la clé comme chemin
+            $path = $config['path'] ?? $key;
 
             $this->router->addRoute($method, $path, $controller . '@' . $action);
         }

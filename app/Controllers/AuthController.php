@@ -20,7 +20,7 @@ class AuthController extends Controller
 
             // Verif doublon email
             if (User::findByEmail($email)) {
-                return $this->view("auth/register", ["error" => "Email déjà utilisé."]);
+                return $this->render("auth/register", ["error" => "Email déjà utilisé."]);
             }
 
             $token = bin2hex(random_bytes(32));
@@ -35,12 +35,12 @@ class AuthController extends Controller
 
             Mail::sendActivationMail($email, $token);
 
-            return $this->view("auth/register", [
+            return $this->render("auth/register", [
                 "success" => "Votre compte a été créé. Vérifiez vos emails pour l'activer."
             ]);
         }
 
-        return $this->view("auth/register");
+        return $this->render("auth/register");
     }
 
     public function activate()
@@ -73,7 +73,7 @@ class AuthController extends Controller
             $user = User::findByEmail($email);
 
             if (!$user) {
-                return $this->view("auth/login", ["error" => "Utilisateur non trouvé"]);
+                return $this->render("auth/login", ["error" => "Utilisateur non trouvé"]);
             }
             // echo "<pre>";
             // var_dump($user);
@@ -81,11 +81,11 @@ class AuthController extends Controller
             // exit;
 
             if (!$user["is_active"]) {
-                return $this->view("auth/login", ["error" => "Votre compte n'est pas activé."]);
+                return $this->render("auth/login", ["error" => "Votre compte n'est pas activé."]);
             }
 
             if (!password_verify($password, $user["password"])) {
-                return $this->view("auth/login", ["error" => "Mot de passe incorrect"]);
+                return $this->render("auth/login", ["error" => "Mot de passe incorrect"]);
             }
 
             Session::set("user", $user);
@@ -93,7 +93,7 @@ class AuthController extends Controller
             exit;
         }
 
-        return $this->view("auth/login");
+        return $this->render("auth/login");
     }
 
     public function logout()

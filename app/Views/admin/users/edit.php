@@ -11,8 +11,13 @@
 
 <form action="/admin/users/<?= $user['id'] ?>/update" method="POST" class="admin-form">
     <div class="form-group">
-        <label for="username">Nom d'utilisateur *</label>
-        <input type="text" id="username" name="username" required value="<?= htmlspecialchars($user['username']) ?>">
+        <label for="firstname">Prénom *</label>
+        <input type="text" id="firstname" name="firstname" required value="<?= htmlspecialchars($user['firstname']) ?>">
+    </div>
+
+    <div class="form-group">
+        <label for="lastname">Nom *</label>
+        <input type="text" id="lastname" name="lastname" required value="<?= htmlspecialchars($user['lastname']) ?>">
     </div>
 
     <div class="form-group">
@@ -37,7 +42,7 @@
 
     <div class="form-info">
         <p><strong>Date d'inscription :</strong> <?= date('d/m/Y H:i', strtotime($user['created_at'])) ?></p>
-        <p><strong>Email vérifié :</strong> <?= $user['email_verified_at'] ? 'Oui (' . date('d/m/Y', strtotime($user['email_verified_at'])) . ')' : 'Non' ?></p>
+        <p><strong>Compte actif :</strong> <?= $user['is_active'] ? 'Oui' : 'Non' ?></p>
     </div>
 
     <div class="form-actions">

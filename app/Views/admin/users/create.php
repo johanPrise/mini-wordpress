@@ -11,8 +11,13 @@
 
 <form action="/admin/users/store" method="POST" class="admin-form">
     <div class="form-group">
-        <label for="username">Nom d'utilisateur *</label>
-        <input type="text" id="username" name="username" required placeholder="Nom d'utilisateur">
+        <label for="firstname">Prénom *</label>
+        <input type="text" id="firstname" name="firstname" required placeholder="Prénom">
+    </div>
+
+    <div class="form-group">
+        <label for="lastname">Nom *</label>
+        <input type="text" id="lastname" name="lastname" required placeholder="Nom">
     </div>
 
     <div class="form-group">

@@ -18,19 +18,11 @@ class User extends Model
     }
 
     /**
-     * Trouver un utilisateur par nom d'utilisateur (utilise la méthode générique)
+     * Trouver un utilisateur par token d'activation (utilise la méthode générique)
      */
-    public static function findByUsername(string $username): ?array
+    public static function findByToken(string $token): ?array
     {
-        return self::findBy('username', $username);
-    }
-
-    /**
-     * Trouver un utilisateur par token de vérification (utilise la méthode générique)
-     */
-    public static function findByVerificationToken(string $token): ?array
-    {
-        return self::findBy('verification_token', $token);
+        return self::findBy('token', $token);
     }
 
     /**
@@ -53,20 +45,25 @@ class User extends Model
         return self::exists('email', $email, $excludeId);
     }
 
+
     /**
-     * Vérifier si un nom d'utilisateur existe déjà (utilise la méthode générique)
+     * Activer le compte de l'utilisateur via email et token
      */
-    public static function usernameExists(string $username, ?int $excludeId = null): bool
+    public static function activate(string $email, string $token): int
     {
-        return self::exists('username', $username, $excludeId);
+        $stmt = self::getDb()->prepare("UPDATE " . static::$table . " SET is_active = 1, token = NULL WHERE email = :email AND token = :token");
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->bindValue(':token', $token, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
     /**
-     * Marquer l'email comme vérifié
+     * Marquer l'utilisateur comme actif (email vérifié)
      */
     public static function verifyEmail(int $id): bool
     {
-        $stmt = self::getDb()->prepare("UPDATE " . static::$table . " SET email_verified_at = NOW(), verification_token = NULL WHERE id = :id");
+        $stmt = self::getDb()->prepare("UPDATE " . static::$table . " SET is_active = TRUE, token = NULL WHERE id = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -76,7 +73,7 @@ class User extends Model
      */
     public static function setResetToken(int $id, string $token, int $expiresInMinutes = 60): bool
     {
-        $stmt = self::getDb()->prepare("UPDATE " . static::$table . " SET reset_token = :token, reset_token_expires_at = DATE_ADD(NOW(), INTERVAL :minutes MINUTE) WHERE id = :id");
+        $stmt = self::getDb()->prepare("UPDATE " . static::$table . " SET reset_token = :token, reset_token_expires_at = NOW() + make_interval(mins => :minutes) WHERE id = :id");
         $stmt->bindValue(':token', $token, PDO::PARAM_STR);
         $stmt->bindValue(':minutes', $expiresInMinutes, PDO::PARAM_INT);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
@@ -108,7 +105,7 @@ class User extends Model
     public static function paginate(int $page = 1, int $perPage = 10): array
     {
         $offset = ($page - 1) * $perPage;
-        $stmt = self::getDb()->prepare("SELECT id, username, email, role, email_verified_at, created_at FROM " . static::$table . " ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+        $stmt = self::getDb()->prepare("SELECT id, firstname, lastname, email, role, is_active, created_at FROM " . static::$table . " ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();

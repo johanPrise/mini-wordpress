@@ -14,8 +14,12 @@
         <nav class="sidebar-nav">
             <ul>
                 <li><a href="/admin">Dashboard</a></li>
+                <?php if (isset($_SESSION['user']) && in_array($_SESSION['user']['role'], ['admin', 'editor'])): ?>
                 <li><a href="/admin/pages">Pages</a></li>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin'): ?>
                 <li><a href="/admin/users">Utilisateurs</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -28,7 +32,8 @@
         <header class="admin-topbar">
             <div class="user-info">
                 <?php if (isset($_SESSION['user'])): ?>
-                    Connecté en tant que <strong><?= htmlspecialchars($_SESSION['user']['username'] ?? 'Admin') ?></strong>
+                    Connecté en tant que <strong><?= htmlspecialchars($_SESSION['user']['firstname'] . ' ' . $_SESSION['user']['lastname']) ?></strong>
+                    <span class="role-badge">(<?= ucfirst($_SESSION['user']['role']) ?>)</span>
                 <?php endif; ?>
             </div>
         </header>

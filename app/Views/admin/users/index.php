@@ -17,10 +17,11 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Nom d'utilisateur</th>
+            <th>Prénom</th>
+            <th>Nom</th>
             <th>Email</th>
             <th>Rôle</th>
-            <th>Email vérifié</th>
+            <th>Actif</th>
             <th>Date d'inscription</th>
             <th>Actions</th>
         </tr>
@@ -30,14 +31,15 @@
             <?php foreach ($users as $user): ?>
                 <tr>
                     <td><?= $user['id'] ?></td>
-                    <td><?= htmlspecialchars($user['username']) ?></td>
+                    <td><?= htmlspecialchars($user['firstname']) ?></td>
+                    <td><?= htmlspecialchars($user['lastname']) ?></td>
                     <td><?= htmlspecialchars($user['email']) ?></td>
                     <td>
                         <span class="badge badge-<?= $user['role'] === 'admin' ? 'danger' : ($user['role'] === 'editor' ? 'warning' : 'secondary') ?>">
                             <?= ucfirst($user['role']) ?>
                         </span>
                     </td>
-                    <td><?= $user['email_verified_at'] ? '✓ ' . date('d/m/Y', strtotime($user['email_verified_at'])) : '✗' ?></td>
+                    <td><?= $user['is_active'] ? '✓' : '✗' ?></td>
                     <td><?= date('d/m/Y H:i', strtotime($user['created_at'])) ?></td>
                     <td class="actions">
                         <a href="/admin/users/<?= $user['id'] ?>/edit" class="btn btn-sm btn-secondary">Modifier</a>
@@ -51,7 +53,7 @@
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="7" class="text-center">Aucun utilisateur trouvé.</td>
+                <td colspan="8" class="text-center">Aucun utilisateur trouvé.</td>
             </tr>
         <?php endif; ?>
     </tbody>

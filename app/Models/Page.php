@@ -30,7 +30,7 @@ class Page extends Model
      */
     public static function getMenuPages(): array
     {
-        $stmt = self::getDb()->prepare("SELECT id, title, slug FROM " . static::$table . " WHERE status = 'published' AND in_menu = 1 ORDER BY menu_order ASC");
+        $stmt = self::getDb()->prepare("SELECT id, title, slug FROM " . static::$table . " WHERE status = 'published' AND in_menu = TRUE ORDER BY menu_order ASC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

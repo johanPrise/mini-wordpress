@@ -1,6 +1,6 @@
 <?php
 
- namespace App\Controllers;
+namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Session;
@@ -8,23 +8,10 @@ use App\Models\User;
 
 /**
  * UserController - Gestion des utilisateurs (CRUD) côté admin
+ * Accès réservé aux administrateurs uniquement
  */
 class UserController extends Controller
 {
-    /**
-     * Vérifier si l'utilisateur est connecté et est admin
-     */
-    private function requireAdmin(): void
-    {
-        $user = Session::get('user');
-        if (!$user) {
-            $this->redirect('/login');
-        }
-        if ($user['role'] !== 'admin') {
-            $this->flash('error', 'Accès non autorisé.');
-            $this->redirect('/admin');
-        }
-    }
 
     /**
      * Liste des utilisateurs (admin)
@@ -66,13 +53,14 @@ class UserController extends Controller
     {
         $this->requireAdmin();
 
-        $username = trim($_POST['username'] ?? '');
+        $firstname = trim($_POST['firstname'] ?? '');
+        $lastname = trim($_POST['lastname'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $role = $_POST['role'] ?? 'user';
 
         // Validation
-        if (empty($username) || empty($email) || empty($password)) {
+        if (empty($firstname) || empty($lastname) || empty($email) || empty($password)) {
             $this->flash('error', 'Tous les champs sont obligatoires.');
             $this->redirect('/admin/users/create');
             return;
@@ -80,12 +68,6 @@ class UserController extends Controller
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->flash('error', 'Email invalide.');
-            $this->redirect('/admin/users/create');
-            return;
-        }
-
-        if (User::usernameExists($username)) {
-            $this->flash('error', 'Ce nom d\'utilisateur existe déjà.');
             $this->redirect('/admin/users/create');
             return;
         }
@@ -98,11 +80,12 @@ class UserController extends Controller
 
         // Créer l'utilisateur
         $userId = User::create([
-            'username' => $username,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
             'email' => $email,
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'role' => $role,
-            'email_verified_at' => date('Y-m-d H:i:s') // Vérifié par défaut si créé par admin
+            'is_active' => true // Actif par défaut si créé par admin
         ]);
 
         if ($userId) {
@@ -153,26 +136,21 @@ class UserController extends Controller
             return;
         }
 
-        $username = trim($_POST['username'] ?? '');
+        $firstname = trim($_POST['firstname'] ?? '');
+        $lastname = trim($_POST['lastname'] ?? '');
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $role = $_POST['role'] ?? 'user';
 
         // Validation
-        if (empty($username) || empty($email)) {
-            $this->flash('error', 'Le nom d\'utilisateur et l\'email sont obligatoires.');
+        if (empty($firstname) || empty($lastname) || empty($email)) {
+            $this->flash('error', 'Le prénom, nom et l\'email sont obligatoires.');
             $this->redirect("/admin/users/$id/edit");
             return;
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->flash('error', 'Email invalide.');
-            $this->redirect("/admin/users/$id/edit");
-            return;
-        }
-
-        if (User::usernameExists($username, $id)) {
-            $this->flash('error', 'Ce nom d\'utilisateur existe déjà.');
             $this->redirect("/admin/users/$id/edit");
             return;
         }
@@ -185,7 +163,8 @@ class UserController extends Controller
 
         // Préparer les données
         $data = [
-            'username' => $username,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
             'email' => $email,
             'role' => $role
         ];

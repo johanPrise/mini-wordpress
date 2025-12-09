@@ -8,26 +8,17 @@ use App\Models\Page;
 
 /**
  * PageController - Gestion des pages (CRUD) côté admin
+ * Accès réservé aux administrateurs et éditeurs
  */
 class PageController extends Controller
 {
-    /**
-     * Vérifier si l'utilisateur est connecté (middleware simple)
-     */
-    private function requireAuth(): void
-    {
-        if (!Session::get('user')) {
-            $this->redirect('/login');
-        }
-    }
-
     /**
      * Liste des pages (admin)
      * GET /admin/pages
      */
     public function index(): void
     {
-        $this->requireAuth();
+        $this->requireEditor();
 
         $pages = Page::all();
 
@@ -45,7 +36,7 @@ class PageController extends Controller
      */
     public function create(): void
     {
-        $this->requireAuth();
+        $this->requireEditor();
 
         $this->render('admin/pages/create', [
             'title' => 'Créer une page',
@@ -59,12 +50,12 @@ class PageController extends Controller
      */
     public function store(): void
     {
-        $this->requireAuth();
+        $this->requireEditor();
 
         $title = trim($_POST['title'] ?? '');
         $content = trim($_POST['content'] ?? '');
         $status = $_POST['status'] ?? 'draft';
-        $inMenu = isset($_POST['in_menu']) ? 1 : 0;
+        $inMenu = isset($_POST['in_menu']);
         $menuOrder = (int) ($_POST['menu_order'] ?? 0);
 
         // Validation
@@ -104,7 +95,7 @@ class PageController extends Controller
      */
     public function edit(int $id): void
     {
-        $this->requireAuth();
+        $this->requireEditor();
 
         $page = Page::find($id);
 
@@ -127,7 +118,7 @@ class PageController extends Controller
      */
     public function update(int $id): void
     {
-        $this->requireAuth();
+        $this->requireEditor();
 
         $page = Page::find($id);
 
@@ -140,7 +131,7 @@ class PageController extends Controller
         $title = trim($_POST['title'] ?? '');
         $content = trim($_POST['content'] ?? '');
         $status = $_POST['status'] ?? 'draft';
-        $inMenu = isset($_POST['in_menu']) ? 1 : 0;
+        $inMenu = isset($_POST['in_menu']);
         $menuOrder = (int) ($_POST['menu_order'] ?? 0);
 
         // Validation
@@ -181,7 +172,7 @@ class PageController extends Controller
      */
     public function delete(int $id): void
     {
-        $this->requireAuth();
+        $this->requireEditor();
 
         $page = Page::find($id);
 
