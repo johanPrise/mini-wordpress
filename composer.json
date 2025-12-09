@@ -1,0 +1,7 @@
+{
+    "require": {
+        "phpmailer/phpmailer": "^7.0",
+      "ext-pdo": "*",
+        "symfony/yaml": "^8.0"
+    }
+}
