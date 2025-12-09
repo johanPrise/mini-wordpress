@@ -1,114 +1,23 @@
-# ================================
-# FRONT OFFICE
-# ================================
-
 /:
   controller: HomeController
   action: index
 
-# Pages dynamiques (ex: /ma-page, /a-propos)
-# Géré différemment - voir plus bas
-
-# ================================
-# AUTH (Front)
-# ================================
-
-/login:
-  controller: AuthController
-  action: showLogin
-
-/login/submit:
-  controller: AuthController
-  action: login
-
-/logout:
-  controller: AuthController
-  action: logout
-
 /register:
-  controller: AuthController
-  action: showRegister
-
-/register/submit:
   controller: AuthController
   action: register
 
-/verify-email:
+/login:
   controller: AuthController
-  action: verifyEmail
+  action: login
 
 /forgot-password:
-  controller: AuthController
-  action: showForgotPassword
-
-/forgot-password/submit:
   controller: AuthController
   action: forgotPassword
 
 /reset-password:
   controller: AuthController
-  action: showResetPassword
-
-/reset-password/submit:
-  controller: AuthController
   action: resetPassword
 
-# ================================
-# BACK OFFICE
-# ================================
-
-/admin:
-  controller: AdminController
-  action: dashboard
-
-# --- Gestion Utilisateurs ---
-
-/admin/users:
-  controller: UserController
-  action: index
-
-/admin/users/create:
-  controller: UserController
-  action: showCreate
-
-/admin/users/create/submit:
-  controller: UserController
-  action: create
-
-/admin/users/edit:
-  controller: UserController
-  action: showEdit
-
-/admin/users/edit/submit:
-  controller: UserController
-  action: edit
-
-/admin/users/delete:
-  controller: UserController
-  action: delete
-
-# --- Gestion Pages ---
-
-/admin/pages:
-  controller: PageController
-  action: index
-
-/admin/pages/create:
-  controller: PageController
-  action: showCreate
-
-/admin/pages/create/submit:
-  controller: PageController
-  action: create
-
-/admin/pages/edit:
-  controller: PageController
-  action: showEdit
-
-/admin/pages/edit/submit:
-  controller: PageController
-  action: edit
-
-/admin/pages/delete:
-  controller: PageController
-  action: delete
+/activate:
+  controller: AuthController
+  action: activate
