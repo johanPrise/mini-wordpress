@@ -48,6 +48,16 @@ git checkout houda -- app/Views/auth/reset-password.php
  */
 public static function activate(string $email, string $token): int
 {
+    // Validation de l'email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return 0;
+    }
+    
+    // Validation du token (doit être hexadécimal, 64 caractères)
+    if (!ctype_xdigit($token) || strlen($token) !== 64) {
+        return 0;
+    }
+    
     $stmt = self::getDb()->prepare(
         "UPDATE " . static::$table . " 
          SET is_active = TRUE, token = NULL, email_verified_at = NOW()
@@ -153,9 +163,9 @@ docker-compose up -d
 # Installer dépendances
 docker-compose exec app composer install
 
-# Importer DB
-docker-compose exec mysql mysql -uroot -proot mini_wordpress < migrations/init.sql
-docker-compose exec mysql mysql -uroot -proot mini_wordpress < migrations/002_add_user_activation.sql
+# Importer DB (utilisez les credentials de votre docker-compose.yml)
+docker-compose exec mysql mysql -u${DB_USER:-root} -p${DB_PASS:-root} mini_wordpress < migrations/init.sql
+docker-compose exec mysql mysql -u${DB_USER:-root} -p${DB_PASS:-root} mini_wordpress < migrations/002_add_user_activation.sql
 ```
 
 ### 10. Tester

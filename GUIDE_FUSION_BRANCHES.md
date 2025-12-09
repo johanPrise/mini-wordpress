@@ -266,6 +266,16 @@ cp app/Models/User.php app/Models/User.php.backup
  */
 public static function activate(string $email, string $token): int
 {
+    // Validation de l'email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return 0;
+    }
+    
+    // Validation du token (doit être hexadécimal)
+    if (!ctype_xdigit($token) || strlen($token) !== 64) {
+        return 0;
+    }
+    
     $stmt = self::getDb()->prepare(
         "UPDATE " . static::$table . " 
          SET is_active = TRUE, token = NULL, email_verified_at = NOW()
@@ -431,6 +441,9 @@ git add .env.example
 cp .env.example .env
 # Éditer .env avec vos vraies credentials
 nano .env
+
+# IMPORTANT: Ne jamais commiter .env dans Git!
+# Vérifier qu'il est dans .gitignore
 ```
 
 ### Étape 11 : Tester la fusion
@@ -452,11 +465,14 @@ docker-compose exec app composer install
 
 **11.3 - Exécuter les migrations**
 ```bash
+# Note: Utilisez les credentials définis dans votre docker-compose.yml
+# Par défaut avec Docker: DB_USER=root, DB_PASS=root
+
 # Importer le schéma initial
-docker-compose exec mysql mysql -uroot -proot mini_wordpress < migrations/init.sql
+docker-compose exec mysql mysql -u${DB_USER:-root} -p${DB_PASS:-root} mini_wordpress < migrations/init.sql
 
 # Exécuter la migration d'activation
-docker-compose exec mysql mysql -uroot -proot mini_wordpress < migrations/002_add_user_activation.sql
+docker-compose exec mysql mysql -u${DB_USER:-root} -p${DB_PASS:-root} mini_wordpress < migrations/002_add_user_activation.sql
 ```
 
 **11.4 - Tests fonctionnels**
@@ -602,8 +618,9 @@ ports:
 **Symptôme :** Erreur "Table doesn't exist"
 **Solution :**
 ```bash
-docker-compose exec mysql mysql -uroot -proot mini_wordpress < migrations/init.sql
-docker-compose exec mysql mysql -uroot -proot mini_wordpress < migrations/002_add_user_activation.sql
+# Utilisez les credentials définis dans votre docker-compose.yml
+docker-compose exec mysql mysql -u${DB_USER:-root} -p${DB_PASS:-root} mini_wordpress < migrations/init.sql
+docker-compose exec mysql mysql -u${DB_USER:-root} -p${DB_PASS:-root} mini_wordpress < migrations/002_add_user_activation.sql
 ```
 
 ---

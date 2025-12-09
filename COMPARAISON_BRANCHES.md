@@ -158,6 +158,16 @@ public function delete(int $id): void
  */
 public static function activate(string $email, string $token): int
 {
+    // Validation de l'email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return 0;
+    }
+    
+    // Validation du token (doit être hexadécimal, 64 caractères)
+    if (!ctype_xdigit($token) || strlen($token) !== 64) {
+        return 0;
+    }
+    
     $stmt = self::getDb()->prepare(
         "UPDATE " . static::$table . " 
          SET is_active = TRUE, token = NULL, email_verified_at = NOW()
@@ -325,9 +335,9 @@ CREATE TABLE users (
 
 | Fichier | main | houda | Action |
 |---------|------|-------|--------|
-| `.env` | ❌ Absent | ⚠️ **COMMITÉ** | **EXCLURE** + .gitignore |
+| `.env` | ❌ Absent | ⚠️ **COMMITTÉ** | **EXCLURE** + .gitignore |
 | `.gitignore` | ❌ Absent | ❌ Absent | **CRÉER** |
-| `vendor/` | ❌ Absent | ⚠️ **COMMITÉ** | **EXCLURE** + .gitignore |
+| `vendor/` | ❌ Absent | ⚠️ **COMMITTÉ** | **EXCLURE** + .gitignore |
 
 **Contenu .gitignore recommandé :**
 ```
