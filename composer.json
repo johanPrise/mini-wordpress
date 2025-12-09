@@ -1,7 +1,15 @@
 {
-    "require": {
-        "phpmailer/phpmailer": "^7.0",
-      "ext-pdo": "*",
-        "symfony/yaml": "^8.0"
+  "name": "johanprise/mini-wordpress",
+  "description": "Mini WordPress MVC from scratch",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
     }
+  },
+  "require": {
+    "phpmailer/phpmailer": "^7.0",
+    "ext-pdo": "*",
+    "symfony/yaml": "^8.0"
+  }
 }
