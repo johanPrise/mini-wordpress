@@ -1,10 +1,15 @@
-<h1>Mot de passe oublié</h1>
+<h2>Mot de passe oublié</h2>
 
 <?php if (!empty($error)): ?>
-<p style="color:red"><?= $error ?></p>
+    <p style="color:red"><?= $error ?></p>
+<?php endif; ?>
+
+<?php if (!empty($success)): ?>
+    <p style="color:green"><?= $success ?></p>
 <?php endif; ?>
 
 <form method="POST">
-    <input type="email" name="email" placeholder="Votre email"><br>
-    <button>Envoyer</button>
+    <label>Email :</label>
+    <input type="email" name="email" required>
+    <button type="submit">Envoyer le lien</button>
 </form>

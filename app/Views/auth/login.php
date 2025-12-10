@@ -6,4 +6,7 @@
     <input name="email" placeholder="Email"><br>
     <input type="password" name="password" placeholder="Mot de passe"><br>
     <button>Connexion</button>
+    <p>
+        <a href="/forgot-password">Mot de passe oublié ?</a>
+    </p>
 </form>
