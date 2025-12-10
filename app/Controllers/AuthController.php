@@ -13,14 +13,43 @@ class AuthController extends Controller
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            $firstname = trim($_POST["firstname"]);
-            $lastname = trim($_POST["lastname"]);
-            $email = strtolower(trim($_POST["email"]));
-            $password = trim($_POST["password"]);
+            $firstname = trim($_POST["firstname"] ?? '');
+            $lastname = trim($_POST["lastname"] ?? '');
+            $email = strtolower(trim($_POST["email"] ?? ''));
+            $password = $_POST["password"] ?? '';
+            $passwordConfirm = $_POST["password_confirm"] ?? '';
+
+            // Validation des champs requis
+            if (empty($firstname) || strlen($firstname) < 2) {
+                return $this->render("auth/register", ["error" => "Le prénom doit contenir au moins 2 caractères."]);
+            }
+
+            if (empty($lastname) || strlen($lastname) < 2) {
+                return $this->render("auth/register", ["error" => "Le nom doit contenir au moins 2 caractères."]);
+            }
+
+            // Validation email
+            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return $this->render("auth/register", ["error" => "Veuillez entrer une adresse email valide."]);
+            }
+
+            // Validation mot de passe (min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre)
+            if (strlen($password) < 8) {
+                return $this->render("auth/register", ["error" => "Le mot de passe doit contenir au moins 8 caractères."]);
+            }
+
+            if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password)) {
+                return $this->render("auth/register", ["error" => "Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre."]);
+            }
+
+            // Confirmation mot de passe
+            if ($password !== $passwordConfirm) {
+                return $this->render("auth/register", ["error" => "Les mots de passe ne correspondent pas."]);
+            }
 
             // Verif doublon email
             if (User::findByEmail($email)) {
-                return $this->render("auth/register", ["error" => "Email déjà utilisé."]);
+                return $this->render("auth/register", ["error" => "Cet email est déjà utilisé."]);
             }
 
             $token = bin2hex(random_bytes(32));
@@ -67,13 +96,26 @@ class AuthController extends Controller
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            $email = strtolower(trim($_POST["email"]));
-            $password = $_POST["password"];
+            $email = strtolower(trim($_POST["email"] ?? ''));
+            $password = $_POST["password"] ?? '';
+
+            // Validation champs requis
+            if (empty($email)) {
+                return $this->render("auth/login", ["error" => "L'email est requis."]);
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return $this->render("auth/login", ["error" => "Veuillez entrer une adresse email valide."]);
+            }
+
+            if (empty($password)) {
+                return $this->render("auth/login", ["error" => "Le mot de passe est requis."]);
+            }
 
             $user = User::findByEmail($email);
 
             if (!$user) {
-                return $this->render("auth/login", ["error" => "Utilisateur non trouvé"]);
+                return $this->render("auth/login", ["error" => "Identifiants incorrects."]);
             }
             // echo "<pre>";
             // var_dump($user);
@@ -145,7 +187,33 @@ class AuthController extends Controller
         // Formulaire envoyé
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-            $password = trim($_POST["password"]);
+            $password = $_POST["password"] ?? '';
+            $passwordConfirm = $_POST["password_confirm"] ?? '';
+
+            // Validation mot de passe
+            if (strlen($password) < 8) {
+                return $this->render("auth/reset-password", [
+                    "error" => "Le mot de passe doit contenir au moins 8 caractères.",
+                    "email" => $email,
+                    "token" => $token
+                ]);
+            }
+
+            if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $password)) {
+                return $this->render("auth/reset-password", [
+                    "error" => "Le mot de passe doit contenir une majuscule, une minuscule et un chiffre.",
+                    "email" => $email,
+                    "token" => $token
+                ]);
+            }
+
+            if ($password !== $passwordConfirm) {
+                return $this->render("auth/reset-password", [
+                    "error" => "Les mots de passe ne correspondent pas.",
+                    "email" => $email,
+                    "token" => $token
+                ]);
+            }
 
             // MODIFIED: Find user by token first
             $user = User::findByResetToken($token);
@@ -155,9 +223,9 @@ class AuthController extends Controller
                 // Update password using ID
                 User::resetPassword($user['id'], password_hash($password, PASSWORD_DEFAULT));
                 
-                echo "<h2>Votre mot de passe a été changé !</h2>";
-                echo "<a href='/login'>Se connecter</a>";
-                return;
+                return $this->render("auth/login", [
+                    "success" => "Votre mot de passe a été modifié. Vous pouvez maintenant vous connecter."
+                ]);
             } else {
                  return $this->render("auth/reset-password", [
                     "error" => "Lien de réinitialisation invalide ou expiré.",
